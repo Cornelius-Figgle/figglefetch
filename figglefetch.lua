@@ -14,9 +14,7 @@ end
 -- returns a pretty-printed uptime (heavily inspired by neofetch)
 function uptime()
   -- get system uptime in seconds
-  uptime_s = runcommand(
-    "echo $(( $(date +%s) - $(date -d\"$(uptime -s)\" +%s) ))"
-  )
+  uptime_s = runcommand("date +%s") - runcommand("date -d\"$(uptime -s)\" +%s")
 
   -- find denominations
   uptime = {}
