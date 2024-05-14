@@ -14,17 +14,17 @@ end
 -- returns a pretty-printed uptime (heavily inspired by neofetch)
 function uptime()
   -- get system uptime in seconds
-  uptime_s = runcommand("date +%s") - runcommand("date -d\"$(uptime -s)\" +%s")
+  local uptime_s = runcommand("date +%s") - runcommand("date -d\"$(uptime -s)\" +%s")
 
   -- find denominations
-  uptime = {}
+  local uptime = {}
   uptime.d = math.floor(uptime_s / 86400)
   uptime.h = math.floor((uptime_s - uptime.d*86400) / 3600)
   uptime.m = math.floor((uptime_s - uptime.d*86400 - uptime.h*3600) / 60)
   uptime.s = uptime_s - uptime.d*86400 - uptime.h*3600 - uptime.m*60
 
   -- pretty print
-  uptime_pp = string.format(
+  local uptime_pp = string.format(
     "%sd %sh %sm %ss",
     uptime.d, uptime.h, uptime.m, uptime.s
   )
@@ -37,24 +37,39 @@ function uptime()
   return uptime_pp
 end
 
+-- returns the pretty name for the OS
+function osname()
+  -- get system info
+  local os_release = runcommand("cat /etc/os-release")
+  print(os_release)
+
+  -- extract pretty name
+  local name_pp = os_release:match('PRETTY_NAME="\\K[^"]+')
+  print(name_pp)
+
+  return name_pp
+end
+
 
 -- define table for sysinfo
 data = {}
-data["line"] = string.rep("-", 10)
+data.line = string.rep("-", 10)
 
 -- gather data
-data["user"] = runcommand("whoami")
-data["host"] = runcommand("hostname")
-data["uptime"] = uptime()
+data.user = runcommand("whoami")
+data.host = runcommand("hostname")
+data.uptime = uptime()
+data.os = osname()
 
 -- concatanate data to string
 output = string.format(
   "USER: %s" .. "\n"
   .. "HOST: %s" .. "\n"
-  .. "UPTIME: %s" .. "\n",
-  data["user"], data["host"], data["uptime"]
+  .. "UPTIME: %s" .. "\n"
+  .. "OS: %s" .. "\n",
+  data.user, data.host, data.uptime, data.os
 )
 
 
 -- final display & exit
-print(output)
+-- print(output)
