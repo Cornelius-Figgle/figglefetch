@@ -19,9 +19,9 @@ function uptime()
   -- find denominations
   local uptime = {}
   uptime.d = math.floor(uptime_s / 86400)
-  uptime.h = math.floor((uptime_s - uptime.d*86400) / 3600)
-  uptime.m = math.floor((uptime_s - uptime.d*86400 - uptime.h*3600) / 60)
-  uptime.s = uptime_s - uptime.d*86400 - uptime.h*3600 - uptime.m*60
+  uptime.h = math.floor((uptime_s - uptime.d * 86400) / 3600)
+  uptime.m = math.floor((uptime_s - uptime.d * 86400 - uptime.h * 3600) / 60)
+  uptime.s = uptime_s - uptime.d * 86400 - uptime.h * 3600 - uptime.m * 60
 
   -- pretty print
   local uptime_pp = string.format(
@@ -41,11 +41,9 @@ end
 function osname()
   -- get system info
   local os_release = runcommand("cat /etc/os-release")
-  print(os_release)
 
   -- extract pretty name
-  local name_pp = os_release:match('PRETTY_NAME="\\K[^"]+')
-  print(name_pp)
+  local name_pp = os_release:match("PRETTY_NAME=\"[^\"]+"):sub(14,-1)
 
   return name_pp
 end
@@ -72,4 +70,4 @@ output = string.format(
 
 
 -- final display & exit
--- print(output)
+print(output)
