@@ -111,17 +111,33 @@ function generateart(os, host, user, algorithm)
   end
 
   -- joins the table of ascii codes into a rectangle
-  local art = ""
+  local art = {}
   for i=1,dimensions[2] do
-    art = art .. table.concat(art_chars, "", dimensions[1]*(i-1)+1, dimensions[1]*i) .. "\n"
+    art[i] = table.concat(art_chars, "", dimensions[1]*(i-1)+1, dimensions[1]*i)
   end
 
   return art
 end
 
 -- combines the randomart and the data and prints it
-function printoutput(output, art)
-  --
+function printoutput(data_fmt, art)
+  -- find which table is longer
+  local longest_output = math.max(#data_fmt, #art)
+
+  local output = ""
+  for i=1,longest_output do
+    if art[i] == nil and data_fmt[i] ~= nil then
+      art[i] = string.rep(" ", #art[1])
+    elseif data_fmt[i] == nil and art[i] ~= nil then
+      data_fmt[i] = ""
+    end
+
+    output = output .. art[i] .. "\t" .. data_fmt[i] .. "\n"
+  end
+
+  print(output)
+
+  return
 end
 
 
@@ -135,17 +151,14 @@ data.host = runcommand("hostname")
 data.uptime = uptime()
 data.os = osname()
 
--- concatanate data to string
-output = string.format(
-  "USER: %s" .. "\n"
-  .. "HOST: %s" .. "\n"
-  .. "UPTIME: %s" .. "\n"
-  .. "OS: %s" .. "\n",
-  data.user, data.host, data.uptime, data.os
-)
-
+-- format data into another table
+data_fmt = {
+  "USER: " .. data.user,
+  "HOST: " .. data.host,
+  "UPTIME: " .. data.uptime,
+  "OS: " .. data.os
+}
 art = generateart(data.os, data.host, data.user)
-print(art)
 
 -- final display & exit
-print(output)
+printoutput(data_fmt, art)
